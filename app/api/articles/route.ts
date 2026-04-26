@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
-import { getSupabaseAdminClient } from "@/lib/supabase/server";
+import { getSupabaseServerClient, getSupabaseAdminClient } from "@/lib/supabase/server";
 
 export async function GET() {
   try {
@@ -34,5 +33,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(data);
   } catch {
     return NextResponse.json({ error: "Failed to create article" }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const { id, published } = await req.json();
+    if (!id) return NextResponse.json({ error: "ID required" }, { status: 400 });
+
+    const supabase = await getSupabaseAdminClient();
+    const { error } = await supabase
+      .from("articles")
+      .update({ published, published_at: published ? new Date().toISOString() : null })
+      .eq("id", id);
+
+    if (error) throw error;
+    return NextResponse.json({ ok: true });
+  } catch {
+    return NextResponse.json({ error: "Failed to update article" }, { status: 500 });
   }
 }
