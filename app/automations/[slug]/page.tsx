@@ -36,6 +36,21 @@ const HOW_IT_WORKS_MAP: Record<string, Step[]> = {
     { step: "02", title: "Triage & Route", body: "Every inbound ticket is classified by type, urgency, and customer sentiment. Common queries are resolved automatically with on-brand responses; complex issues are routed to the right team member instantly." },
     { step: "03", title: "Learn & Improve", body: "The system tracks resolution rates and surfaces recurring issues — giving you the data to reduce ticket volume at the source over time." },
   ],
+  "content": [
+    { step: "01", title: "Brand & Channel Setup", body: "We capture your brand voice, tone guidelines, and target audience. Connect your publishing channels — LinkedIn, Twitter/X, email, blog — and configure your content calendar." },
+    { step: "02", title: "Brief to Draft", body: "Drop in a topic, keyword, or rough idea. The pipeline generates on-brand drafts for every channel simultaneously, formatted and ready for review or auto-publish." },
+    { step: "03", title: "Schedule & Repurpose", body: "Content is scheduled across channels at optimal times. Long-form pieces are automatically repurposed into short-form variants — one brief, maximum reach." },
+  ],
+  "meetings": [
+    { step: "01", title: "Connect Your Meeting Stack", body: "We integrate with Zoom, Google Meet, or Microsoft Teams. Configure your summary format, action item rules, and distribution list in a single onboarding session." },
+    { step: "02", title: "Capture & Summarise", body: "Every meeting is automatically transcribed, summarised, and parsed for decisions and action items. Speaker identification ensures accountability is clear." },
+    { step: "03", title: "Distribute & Sync", body: "Summaries and action items are distributed to attendees and pushed to your project tools (Notion, Asana, HubSpot) immediately after the meeting ends." },
+  ],
+  "custom": [
+    { step: "01", title: "Discovery Workshop", body: "We map your current workflow end-to-end, identify the automation opportunities, and agree on the scope, stack, and success criteria before writing a line of code." },
+    { step: "02", title: "Design & Build", body: "We design the automation architecture and build it on your preferred stack — n8n, Make, Python, or custom. Every integration tested against real data before handover." },
+    { step: "03", title: "Deploy & Iterate", body: "We deploy to production and monitor closely. Most custom automations go through 1–2 optimisation cycles in the first 30 days as real-world edge cases emerge." },
+  ],
 };
 
 const WHATS_INCLUDED_MAP: Record<string, string[]> = {
@@ -59,6 +74,27 @@ const WHATS_INCLUDED_MAP: Record<string, string[]> = {
     "Custom triage taxonomy and routing rules",
     "Auto-response templates for your top 10 query types",
     "30-day post-launch monitoring and optimisation",
+  ],
+  "content": [
+    "Fully configured content pipeline (n8n, Make, or custom stack)",
+    "Integration with your publishing channels (LinkedIn, Twitter/X, email, blog)",
+    "Brand voice and tone calibration",
+    "Content calendar setup and auto-scheduling",
+    "30-day post-launch monitoring and optimisation",
+  ],
+  "meetings": [
+    "Fully configured automation (n8n, Make, or custom stack)",
+    "Meeting platform integration (Zoom, Google Meet, or Teams)",
+    "Custom summary template and action item format",
+    "Project tool sync (Notion, Asana, HubSpot, or similar)",
+    "30-day post-launch monitoring and optimisation",
+  ],
+  "custom": [
+    "Discovery workshop (half-day, remote)",
+    "Custom automation design and architecture document",
+    "Full build on your preferred stack",
+    "Integration with any tool that has an API",
+    "Documentation, team training, and 30-day post-launch support",
   ],
 };
 
@@ -94,6 +130,24 @@ const SEEDS: Record<string, AutomationFull> = {
     description: "AI triage that categorises, prioritises, and routes support tickets — and resolves common queries automatically. Reduces support volume by 40–60%.",
     long_description: "Support teams burn out on repetitive tickets. Password resets, order status checks, refund requests — the same queries, over and over, handled manually by people who could be solving real problems.\n\nThe Customer Support Triage automation sits between your customers and your team. Every inbound ticket is instantly classified by type, urgency, and sentiment. Common queries are resolved automatically with accurate, on-brand responses. Complex issues are enriched with context and routed to the right person — not just the next available agent.\n\nThe result is a support operation that handles 40–60% more volume without adding headcount, with faster first-response times and higher customer satisfaction scores.",
     features: ["Multi-channel ingestion (email, chat, helpdesk, social)", "AI classification by type, urgency, and customer sentiment", "Automatic resolution of common query types", "Smart routing to the right team or individual", "Customer history and context attached to every escalation", "SLA tracking and breach alerting", "Real-time dashboard — volume, resolution rate, CSAT", "Weekly report on top query types and resolution performance"],
+  },
+  "content": {
+    id: "seed-con", name: "Content & Social Pipeline", slug: "content", category: "Marketing", price_from: null,
+    description: "From brief to published post in minutes. AI generates on-brand content drafts, schedules, and repurposes across channels automatically.",
+    long_description: "Marketing teams waste hours going from brief to published content. Writing, editing, formatting, scheduling, repurposing across channels — all manual, all repetitive, all automatable.\n\nThe Content & Social Pipeline takes a topic, keyword, or rough idea and generates on-brand drafts for every channel simultaneously. LinkedIn post, Twitter/X thread, email newsletter, and blog article — all from one brief, all in your voice, all ready to review or auto-publish.\n\nContent is scheduled at optimal times per channel and repurposed continuously, so your team spends time on strategy and creativity rather than copy-paste production work.",
+    features: ["Brief-to-draft generation across all channels", "On-brand voice and tone calibration", "Multi-channel repurposing (LinkedIn, Twitter/X, email, blog)", "Content calendar scheduling and auto-publishing", "Image prompt generation for visual assets", "Performance tracking per post and channel", "A/B headline testing", "Monthly content audit and performance report"],
+  },
+  "meetings": {
+    id: "seed-mee", name: "Meeting Intelligence", slug: "meetings", category: "Ops", price_from: 120000,
+    description: "Auto-transcribe, summarise, and action-track every meeting. Key decisions and tasks captured and distributed to the right people automatically.",
+    long_description: "Every meeting generates decisions, action items, and context — most of which gets lost in someone's notes or never written down at all. Your team leaves meetings unsure who owns what, and follows up days later trying to reconstruct what was agreed.\n\nMeeting Intelligence fixes the capture problem. Every call is automatically transcribed, summarised in a consistent format, and parsed for decisions and action items with clear ownership. Summaries are distributed to attendees and synced to your project tools within minutes of the call ending.\n\nThe result: full accountability without anyone having to take notes, and a searchable record of every decision your business has ever made.",
+    features: ["Auto-transcription (Zoom, Google Meet, Microsoft Teams)", "AI-generated meeting summaries in your preferred format", "Action item extraction with owner and deadline", "Automated distribution to attendees and stakeholders", "Sync to project tools (Notion, Asana, HubSpot, or similar)", "Speaker identification and attribution", "Searchable meeting archive", "Weekly digest of key decisions and open actions"],
+  },
+  "custom": {
+    id: "seed-cus", name: "Custom Automation", slug: "custom", category: "Custom", price_from: null,
+    description: "Have a specific process you want to automate? We scope, design, and build bespoke AI workflows tailored entirely to your operations.",
+    long_description: "Not every process fits a pre-built template. If you have a workflow that's eating your team's time and you can't find an off-the-shelf solution, we scope and build it from scratch.\n\nWe start with a discovery workshop to map your current process end-to-end, identify where automation adds the most value, and agree on success criteria before writing a line of code. Then we design and build on your preferred stack — n8n, Make, Python, or fully custom — integrating with any tool that has an API.\n\nEvery custom build comes with full documentation, team training, and 30 days of post-launch support. Most clients see ROI within the first month.",
+    features: ["Discovery workshop to map your current workflow", "Custom automation design and architecture", "Build on your preferred stack (n8n, Make, Python, or custom)", "Integration with any tool that has an API", "Full testing and QA against real data", "Documentation and team training", "30-day post-launch support and iteration", "Optional ongoing retainer for continuous improvement"],
   },
 };
 
