@@ -155,3 +155,32 @@ create policy "milestones select own" on project_milestones for select
 
 -- automation_metrics: users can see metrics for their own projects
 create policy "metrics select own" on automation_metrics for select using (auth.uid() = user_id);
+
+-- ============================================================
+-- AUTOMATIONS — add rich content columns (v2)
+-- Run these in Supabase SQL editor after the initial migration
+-- ============================================================
+alter table automations
+  add column if not exists long_description text,
+  add column if not exists features jsonb default '[]'::jsonb;
+
+-- Seed: Lead Generation Bot with full product page content
+insert into automations
+  (id, name, slug, description, long_description, features, category, price_from, active, sort_order)
+values (
+  gen_random_uuid(),
+  'Lead Generation Bot',
+  'lead-generation-bot',
+  'Automatically qualify and nurture inbound leads from your website, LinkedIn, and email. Runs 24/7 so your sales team only talks to warm prospects.',
+  E'Most sales teams spend 60–70% of their time chasing leads that will never convert. The Lead Generation Bot fixes that at the source.\n\nIt connects to every channel where potential customers reach out — your website contact form, LinkedIn DMs, and inbound email — and applies a consistent qualification framework automatically. Each lead is scored against your ideal customer profile, enriched with company and role data, and either nurtured through a personalised sequence or escalated to your sales team as a warm, context-rich handoff.\n\nYour team stops chasing dead ends and starts every conversation already knowing what the prospect needs and why they reached out.',
+  '["Multi-channel lead intake (website, LinkedIn, email)","AI-powered ICP scoring and lead qualification","Automatic lead enrichment (company, role, intent signals)","Personalised nurture sequences triggered by behaviour","CRM sync — leads pushed directly into HubSpot, Salesforce, or Pipedrive","Warm handoff alerts with full context for your sales team","Real-time dashboard showing pipeline volume and conversion rates","Weekly digest email summarising lead quality and funnel health"]'::jsonb,
+  'Lead Gen',
+  250000,
+  true,
+  1
+)
+on conflict (slug) do update set
+  long_description = excluded.long_description,
+  features        = excluded.features,
+  price_from      = excluded.price_from,
+  active          = excluded.active;

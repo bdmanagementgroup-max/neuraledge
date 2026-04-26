@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import EnquiryModal from "./EnquiryModal";
 import type { Automation } from "@/app/automations/page";
 
@@ -51,7 +52,15 @@ export default function AutomationsCatalogue({ automations }: { automations: Aut
               {a.category}
             </div>
             <h3 style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 700, letterSpacing: -0.5, marginBottom: 14 }}>
-              {a.name}
+              {a.long_description ? (
+                <Link href={`/automations/${a.slug}`} style={{ color: "inherit", textDecoration: "none" }} className="auto-card-title">
+                  {a.name}
+                </Link>
+              ) : (
+                <button onClick={() => openEnquiry(a.name)} style={{ background: "none", border: "none", color: "inherit", fontFamily: "inherit", fontSize: "inherit", fontWeight: "inherit", letterSpacing: "inherit", padding: 0, cursor: "none", textAlign: "left" }} className="auto-card-title">
+                  {a.name}
+                </button>
+              )}
             </h3>
             <p style={{ color: "var(--muted)", fontSize: 13, lineHeight: 1.9, marginBottom: 28 }}>{a.description}</p>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -88,6 +97,7 @@ export default function AutomationsCatalogue({ automations }: { automations: Aut
         .auto-card:hover { background: var(--edge) !important; }
         .auto-card:hover::before { transform: scaleX(1); }
         .auto-btn:hover { background: var(--accent) !important; color: var(--black) !important; }
+        .auto-card-title:hover { color: var(--accent) !important; }
         @media (max-width: 900px) {
           .automations-grid { grid-template-columns: 1fr !important; }
           .automations-section { padding: 40px 24px 80px !important; }

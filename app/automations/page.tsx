@@ -12,6 +12,8 @@ export type Automation = {
   description: string;
   category: string;
   price_from: number | null;
+  long_description?: string | null;
+  features?: string[];
 };
 
 async function getAutomations(): Promise<Automation[]> {
@@ -19,7 +21,7 @@ async function getAutomations(): Promise<Automation[]> {
     const supabase = await getSupabaseServerClient();
     const { data } = await supabase
       .from("automations")
-      .select("id, name, slug, description, category, price_from")
+      .select("id, name, slug, description, category, price_from, long_description")
       .eq("active", true)
       .order("sort_order", { ascending: true });
     return data ?? [];

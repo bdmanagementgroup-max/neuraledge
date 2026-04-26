@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 type Automation = { id: string; name: string; slug: string; category: string; description: string; price_from: number | null; active: boolean; sort_order: number };
 
@@ -102,16 +103,28 @@ export default function AutomationsClient({ automations: initial }: { automation
                 /{a.slug} · {a.price_from ? `From $${(a.price_from / 100).toLocaleString()}` : "Custom Quote"}
               </div>
             </div>
-            <button
-              onClick={() => toggleActive(a)}
-              style={{
-                fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 700,
-                padding: "6px 14px", cursor: "none", border: "1px solid rgba(255,255,255,0.15)", background: "transparent",
-                color: a.active ? "var(--accent)" : "var(--muted)",
-              }}
-            >
-              {a.active ? "Active" : "Inactive"}
-            </button>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <Link
+                href={`/admin/automations/${a.id}`}
+                style={{
+                  fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 700,
+                  padding: "6px 14px", cursor: "none", border: "1px solid rgba(255,255,255,0.15)",
+                  background: "transparent", color: "var(--white)", textDecoration: "none",
+                }}
+              >
+                Edit
+              </Link>
+              <button
+                onClick={() => toggleActive(a)}
+                style={{
+                  fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 700,
+                  padding: "6px 14px", cursor: "none", border: "1px solid rgba(255,255,255,0.15)", background: "transparent",
+                  color: a.active ? "var(--accent)" : "var(--muted)",
+                }}
+              >
+                {a.active ? "Active" : "Inactive"}
+              </button>
+            </div>
           </div>
         ))}
       </div>
