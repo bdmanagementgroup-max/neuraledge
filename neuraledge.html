@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeuralEdge — AI for Business</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@300;400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #050508;
+    --deep: #0a0a12;
+    --surface: #0f0f1a;
+    --edge: #1a1a2e;
+    --accent: #00f5d4;
+    --gold: #f5a623;
+    --white: #f0eff8;
+    --muted: #6b6a80;
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Mono', monospace;
+    --font-serif: 'Instrument Serif', serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.7;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    position: fixed; top: 0; left: 0;
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease, width 0.2s ease, height 0.2s ease, background 0.2s;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    position: fixed; top: 0; left: 0;
+    width: 36px; height: 36px;
+    border: 1px solid rgba(0,245,212,0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 1000; opacity: 0.4;
+  }
+
+  /* GRID BACKGROUND */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,245,212,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,245,212,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none; z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 60px;
+    z-index: 500;
+    background: linear-gradient(to bottom, rgba(5,5,8,0.95), transparent);
+    backdrop-filter: blur(8px);
+  }
+
+  .logo {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    text-decoration: none;
+    color: var(--white);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo-mark {
+    width: 28px; height: 28px;
+    background: var(--accent);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    animation: pulse-mark 3s ease-in-out infinite;
+  }
+  @keyframes pulse-mark {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,245,212,0.4); }
+    50% { box-shadow: 0 0 20px 8px rgba(0,245,212,0.15); }
+  }
+  .logo span { color: var(--accent); }
+
+  .nav-links {
+    display: flex; align-items: center; gap: 40px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--muted); text-decoration: none;
+    font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--white); }
+
+  .nav-cta {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 10px 24px;
+    font-family: var(--font-body);
+    font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    cursor: none;
+    transition: background 0.2s, color 0.2s;
+    text-decoration: none;
+  }
+  .nav-cta:hover { background: var(--accent); color: var(--black); }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: center;
+    padding: 140px 60px 80px;
+    overflow: hidden;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(0,245,212,0.08) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -55%);
+    pointer-events: none;
+    animation: glow-breathe 6s ease-in-out infinite;
+  }
+  @keyframes glow-breathe {
+    0%, 100% { transform: translate(-50%, -55%) scale(1); opacity: 0.7; }
+    50% { transform: translate(-50%, -55%) scale(1.15); opacity: 1; }
+  }
+
+  .hero-tag {
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 28px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .hero-tag::before {
+    content: ''; display: block;
+    width: 32px; height: 1px; background: var(--accent);
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(56px, 8vw, 110px);
+    font-weight: 800;
+    line-height: 0.92;
+    letter-spacing: -3px;
+    margin-bottom: 36px;
+    max-width: 900px;
+  }
+
+  h1 em {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 400;
+    letter-spacing: -2px;
+  }
+
+  .hero-sub {
+    color: var(--muted);
+    max-width: 480px;
+    font-size: 14px;
+    line-height: 1.9;
+    margin-bottom: 56px;
+  }
+
+  .hero-actions {
+    display: flex; align-items: center; gap: 24px;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--black);
+    padding: 16px 40px;
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 14px;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    text-decoration: none; cursor: none;
+    position: relative; overflow: hidden;
+    transition: transform 0.2s;
+    display: inline-block;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: white;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    opacity: 0.2;
+  }
+  .btn-primary:hover::after { transform: translateX(0); }
+  .btn-primary:hover { transform: translateY(-2px); }
+
+  .btn-ghost {
+    color: var(--muted); font-size: 13px;
+    text-decoration: none; cursor: none;
+    display: flex; align-items: center; gap: 8px;
+    transition: color 0.2s;
+    letter-spacing: 0.05em;
+  }
+  .btn-ghost:hover { color: var(--white); }
+  .btn-ghost::after {
+    content: '→';
+    transition: transform 0.2s;
+  }
+  .btn-ghost:hover::after { transform: translateX(4px); }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: flex; gap: 60px;
+    padding: 40px 60px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    background: var(--deep);
+    position: relative; z-index: 2;
+  }
+  .stat { display: flex; flex-direction: column; gap: 4px; }
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 36px; font-weight: 800;
+    letter-spacing: -1px; color: var(--white);
+  }
+  .stat-num span { color: var(--accent); }
+  .stat-label { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* SECTION BASE */
+  section { position: relative; z-index: 2; }
+
+  .section-label {
+    font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::before {
+    content: '//'; color: var(--muted);
+  }
+
+  /* SERVICES */
+  .services {
+    padding: 120px 60px;
+    background: var(--deep);
+  }
+  .services-header {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 60px; margin-bottom: 80px;
+    align-items: end;
+  }
+  h2 {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 800; letter-spacing: -2px;
+    line-height: 1;
+  }
+  h2 em {
+    font-family: var(--font-serif);
+    font-style: italic; font-weight: 400;
+    color: var(--accent);
+  }
+  .services-desc { color: var(--muted); font-size: 14px; line-height: 1.9; }
+
+  .services-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .service-card {
+    background: var(--surface);
+    padding: 48px 40px;
+    position: relative; overflow: hidden;
+    transition: background 0.3s;
+    group: true;
+  }
+  .service-card:hover { background: var(--edge); }
+  .service-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .service-card:hover::before { transform: scaleX(1); }
+
+  .service-num {
+    font-family: var(--font-display);
+    font-size: 64px; font-weight: 800;
+    color: rgba(255,255,255,0.04);
+    position: absolute; top: 20px; right: 30px;
+    line-height: 1;
+    transition: color 0.3s;
+  }
+  .service-card:hover .service-num { color: rgba(0,245,212,0.06); }
+
+  .service-icon {
+    width: 48px; height: 48px; margin-bottom: 28px;
+    color: var(--accent);
+  }
+  .service-title {
+    font-family: var(--font-display);
+    font-size: 20px; font-weight: 700;
+    margin-bottom: 16px; letter-spacing: -0.5px;
+  }
+  .service-text { color: var(--muted); font-size: 13px; line-height: 1.9; }
+
+  /* HOW IT WORKS */
+  .process {
+    padding: 120px 60px;
+    background: var(--black);
+  }
+  .process-inner {
+    display: grid; grid-template-columns: 1fr 2fr;
+    gap: 80px; align-items: start;
+  }
+  .process-steps { display: flex; flex-direction: column; gap: 0; }
+  .step {
+    display: flex; gap: 32px;
+    padding: 40px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    position: relative;
+    transition: padding-left 0.3s;
+  }
+  .step:hover { padding-left: 12px; }
+  .step-num {
+    font-family: var(--font-display);
+    font-size: 13px; font-weight: 800;
+    color: var(--accent); min-width: 32px;
+    padding-top: 4px;
+  }
+  .step-content h3 {
+    font-family: var(--font-display);
+    font-size: 20px; font-weight: 700;
+    letter-spacing: -0.5px; margin-bottom: 10px;
+  }
+  .step-content p { color: var(--muted); font-size: 13px; line-height: 1.9; }
+
+  /* MARQUEE */
+  .marquee-wrap {
+    padding: 30px 0;
+    background: var(--accent);
+    overflow: hidden;
+    position: relative;
+  }
+  .marquee {
+    display: flex; gap: 60px;
+    animation: marquee 20s linear infinite;
+    white-space: nowrap;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  .marquee-item {
+    font-family: var(--font-display);
+    font-size: 13px; font-weight: 800;
+    color: var(--black); letter-spacing: 0.15em; text-transform: uppercase;
+    display: flex; align-items: center; gap: 24px;
+  }
+  .marquee-item::after {
+    content: '◆'; font-size: 8px;
+  }
+
+  /* TESTIMONIALS */
+  .testimonials {
+    padding: 120px 60px;
+    background: var(--deep);
+  }
+  .testimonials-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 2px; margin-top: 70px;
+  }
+  .testimonial {
+    background: var(--surface);
+    padding: 48px;
+    position: relative;
+  }
+  .testimonial::before {
+    content: '"';
+    font-family: var(--font-serif);
+    font-size: 120px; line-height: 1;
+    color: rgba(0,245,212,0.08);
+    position: absolute; top: 10px; right: 30px;
+  }
+  .testimonial-text {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 18px; line-height: 1.7;
+    margin-bottom: 32px; color: var(--white);
+  }
+  .testimonial-author { display: flex; align-items: center; gap: 16px; }
+  .author-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--edge); border: 1px solid rgba(0,245,212,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-weight: 800;
+    color: var(--accent); font-size: 14px;
+  }
+  .author-name {
+    font-family: var(--font-display); font-weight: 700; font-size: 14px;
+  }
+  .author-role { font-size: 11px; color: var(--muted); letter-spacing: 0.05em; }
+
+  /* PRICING */
+  .pricing {
+    padding: 120px 60px;
+    background: var(--black);
+  }
+  .pricing-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 2px; margin-top: 70px;
+  }
+  .plan {
+    background: var(--surface);
+    padding: 48px 40px;
+    position: relative; overflow: hidden;
+  }
+  .plan.featured {
+    background: var(--edge);
+    border: 1px solid rgba(0,245,212,0.3);
+  }
+  .plan-badge {
+    position: absolute; top: 28px; right: 28px;
+    background: var(--accent); color: var(--black);
+    font-size: 9px; font-weight: 800; letter-spacing: 0.15em;
+    text-transform: uppercase; padding: 4px 10px;
+  }
+  .plan-name {
+    font-family: var(--font-display); font-size: 13px;
+    font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 16px;
+  }
+  .plan-price {
+    font-family: var(--font-display); font-size: 54px; font-weight: 800;
+    letter-spacing: -2px; line-height: 1; margin-bottom: 8px;
+  }
+  .plan-price span { font-size: 20px; color: var(--muted); vertical-align: top; margin-top: 10px; display: inline-block; }
+  .plan-period { font-size: 12px; color: var(--muted); margin-bottom: 36px; }
+  .plan-features { list-style: none; display: flex; flex-direction: column; gap: 14px; margin-bottom: 40px; }
+  .plan-features li {
+    font-size: 13px; color: var(--muted);
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .plan-features li::before { content: '—'; color: var(--accent); flex-shrink: 0; }
+  .plan-features li.active { color: var(--white); }
+
+  .plan-btn {
+    display: block; width: 100%; padding: 14px;
+    text-align: center; font-family: var(--font-display);
+    font-weight: 700; font-size: 13px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    text-decoration: none; cursor: none;
+    transition: all 0.2s;
+  }
+  .plan-btn-outline {
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--muted);
+  }
+  .plan-btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+  .plan-btn-solid {
+    background: var(--accent); color: var(--black);
+  }
+  .plan-btn-solid:hover { filter: brightness(1.1); }
+
+  /* CTA SECTION */
+  .cta-section {
+    padding: 120px 60px;
+    background: var(--deep);
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .cta-section::before {
+    content: '';
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px; height: 400px;
+    background: radial-gradient(ellipse, rgba(0,245,212,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cta-section h2 { margin: 16px 0 24px; }
+  .cta-sub { color: var(--muted); font-size: 14px; max-width: 480px; margin: 0 auto 48px; }
+
+  /* FOOTER */
+  footer {
+    padding: 60px 60px 40px;
+    background: var(--black);
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .footer-top {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px; margin-bottom: 60px;
+  }
+  .footer-brand p { color: var(--muted); font-size: 13px; line-height: 1.9; margin-top: 16px; max-width: 280px; }
+  .footer-col h4 {
+    font-family: var(--font-display); font-size: 12px;
+    font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--white); margin-bottom: 20px;
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-col a { color: var(--muted); text-decoration: none; font-size: 13px; transition: color 0.2s; }
+  .footer-col a:hover { color: var(--accent); }
+  .footer-bottom {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.05);
+    font-size: 12px; color: var(--muted);
+  }
+
+  /* SCROLL ANIMATIONS */
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 120px 24px 60px; }
+    .stats-bar { padding: 30px 24px; gap: 30px; flex-wrap: wrap; }
+    .services, .process, .testimonials, .pricing, .cta-section { padding: 80px 24px; }
+    .services-header, .process-inner { grid-template-columns: 1fr; }
+    .services-grid, .testimonials-grid, .pricing-grid { grid-template-columns: 1fr; }
+    footer { padding: 40px 24px 30px; }
+    .footer-top { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#">
+    <div class="logo-mark"></div>
+    Neural<span>Edge</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Book a Call</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-tag">AI Education & Consulting</div>
+  <h1>Your business.<br><em>Amplified</em><br>by AI.</h1>
+  <p class="hero-sub">We don't just teach AI — we embed it into the DNA of your business. From strategy to implementation, NeuralEdge transforms how companies think, operate, and compete.</p>
+  <div class="hero-actions">
+    <a href="#services" class="btn-primary">Explore Services</a>
+    <a href="#process" class="btn-ghost">See how it works</a>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-num">200<span>+</span></div>
+    <div class="stat-label">Businesses Transformed</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">94<span>%</span></div>
+    <div class="stat-label">Client Retention Rate</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">3.2<span>x</span></div>
+    <div class="stat-label">Avg. Efficiency Gain</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">48<span>hr</span></div>
+    <div class="stat-label">Onboarding to First Win</div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="services-header reveal">
+    <div>
+      <div class="section-label">What We Do</div>
+      <h2>Precision AI,<br><em>delivered</em>.</h2>
+    </div>
+    <p class="services-desc">Every engagement is custom-built around your business reality — not recycled templates. We identify where AI creates leverage and execute fast.</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card reveal">
+      <div class="service-num">01</div>
+      <svg class="service-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="24" cy="24" r="10"/><path d="M24 4v6M24 38v6M4 24h6M38 24h6M10.1 10.1l4.2 4.2M33.7 33.7l4.2 4.2M10.1 37.9l4.2-4.2M33.7 14.3l4.2-4.2"/>
+      </svg>
+      <div class="service-title">AI Strategy & Roadmapping</div>
+      <p class="service-text">We audit your operations and identify the highest-ROI AI opportunities — then build a phased roadmap you can actually execute.</p>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-num">02</div>
+      <svg class="service-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="6" y="8" width="36" height="28" rx="2"/><path d="M16 36v4M32 36v4M10 40h28M24 16v8M20 20l4-4 4 4"/>
+      </svg>
+      <div class="service-title">Executive AI Education</div>
+      <p class="service-text">Intensive workshops and ongoing training that give your leadership team the vocabulary and judgment to lead an AI-powered organization.</p>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-num">03</div>
+      <svg class="service-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M8 40V20l16-14 16 14v20"/><path d="M18 40V28h12v12"/><rect x="20" y="18" width="8" height="8" rx="1"/>
+      </svg>
+      <div class="service-title">Implementation & Deployment</div>
+      <p class="service-text">From custom GPT workflows to full LLM integrations, we build and deploy AI systems that work inside your existing stack.</p>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-num">04</div>
+      <svg class="service-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M6 34l10-12 8 8 8-14 10 8"/><circle cx="38" cy="14" r="4"/>
+      </svg>
+      <div class="service-title">Performance & Analytics</div>
+      <p class="service-text">We instrument your AI deployments so you can measure what's working, iterate fast, and continuously compound gains.</p>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-num">05</div>
+      <svg class="service-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="24" cy="12" r="6"/><circle cx="10" cy="36" r="6"/><circle cx="38" cy="36" r="6"/>
+        <path d="M24 18v8M18 33l-4-5M30 33l4-5"/>
+      </svg>
+      <div class="service-title">Team Upskilling Programs</div>
+      <p class="service-text">Structured learning paths for every department — ops, marketing, finance, sales — so your whole team moves with AI, not against it.</p>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-num">06</div>
+      <svg class="service-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M14 24h6l4-12 4 24 4-12h6"/>
+        <rect x="4" y="8" width="40" height="32" rx="3"/>
+      </svg>
+      <div class="service-title">Ongoing AI Retainers</div>
+      <p class="service-text">Monthly advisory and implementation support as your AI partner — keeping you ahead of the curve as the landscape evolves.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee">
+    <div class="marquee-item">AI Strategy</div>
+    <div class="marquee-item">Machine Learning</div>
+    <div class="marquee-item">LLM Integration</div>
+    <div class="marquee-item">Workflow Automation</div>
+    <div class="marquee-item">Executive Training</div>
+    <div class="marquee-item">Data Intelligence</div>
+    <div class="marquee-item">NLP Solutions</div>
+    <div class="marquee-item">AI Governance</div>
+    <div class="marquee-item">AI Strategy</div>
+    <div class="marquee-item">Machine Learning</div>
+    <div class="marquee-item">LLM Integration</div>
+    <div class="marquee-item">Workflow Automation</div>
+    <div class="marquee-item">Executive Training</div>
+    <div class="marquee-item">Data Intelligence</div>
+    <div class="marquee-item">NLP Solutions</div>
+    <div class="marquee-item">AI Governance</div>
+  </div>
+</div>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <div class="process-inner">
+    <div class="reveal">
+      <div class="section-label">How We Work</div>
+      <h2>From<br>zero to<br><em>deployed.</em></h2>
+    </div>
+    <div class="process-steps">
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <h3>Discovery & Audit</h3>
+          <p>We map your processes, data assets, and competitive landscape to find where AI creates the biggest leverage for your business.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <h3>Strategy Design</h3>
+          <p>A custom AI roadmap with clear priorities, timelines, and success metrics — built for your team's capabilities and your budget.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <h3>Build & Integrate</h3>
+          <p>We implement solutions that slot into your existing systems. No rip-and-replace. No disruption. Just results, fast.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <h3>Train & Embed</h3>
+          <p>We run hands-on sessions until your team owns the tools. The goal is full internal capability — not dependency on us.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">05</div>
+        <div class="step-content">
+          <h3>Measure & Scale</h3>
+          <p>Track ROI, iterate on what's working, and expand into the next high-value area. AI advantage is compounding — we make sure you compound.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="reveal">
+    <div class="section-label">Client Results</div>
+    <h2>Real businesses,<br><em>real outcomes.</em></h2>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial reveal">
+      <p class="testimonial-text">NeuralEdge didn't just consult — they completely changed how we think about our operations. Within 90 days, we had automated 60% of our reporting and our team actually understood why.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">SC</div>
+        <div>
+          <div class="author-name">Sarah Chen</div>
+          <div class="author-role">COO, Meridian Logistics</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial reveal">
+      <p class="testimonial-text">The executive workshop alone was worth it. We walked in sceptical and walked out with a 12-month AI roadmap and the board fully bought in. These people know their stuff.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">JR</div>
+        <div>
+          <div class="author-name">James Rowe</div>
+          <div class="author-role">CEO, Altitude Capital</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial reveal">
+      <p class="testimonial-text">We tried three other AI consultancies before NeuralEdge. The difference is they actually build things, not just decks. We have live systems running in production.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">ML</div>
+        <div>
+          <div class="author-name">Maya Löfgren</div>
+          <div class="author-role">VP Product, StackBridge</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial reveal">
+      <p class="testimonial-text">Our customer support resolution time dropped by 40% in 6 weeks. The NeuralEdge team understood our domain, not just the tech. That's rare.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">DK</div>
+        <div>
+          <div class="author-name">Darren Kwok</div>
+          <div class="author-role">Director of CX, Lumio Health</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="reveal">
+    <div class="section-label">Pricing</div>
+    <h2>Invest in<br><em>intelligence.</em></h2>
+  </div>
+  <div class="pricing-grid">
+    <div class="plan reveal">
+      <div class="plan-name">Launchpad</div>
+      <div class="plan-price"><span>$</span>2,500</div>
+      <div class="plan-period">one-time engagement</div>
+      <ul class="plan-features">
+        <li class="active">AI Opportunity Audit (half-day)</li>
+        <li class="active">Executive Briefing Session</li>
+        <li class="active">Priority Roadmap (3 initiatives)</li>
+        <li class="active">30-day follow-up support</li>
+        <li>Implementation support</li>
+        <li>Team training sessions</li>
+      </ul>
+      <a href="#contact" class="plan-btn plan-btn-outline">Get Started</a>
+    </div>
+    <div class="plan featured reveal">
+      <div class="plan-badge">Most Popular</div>
+      <div class="plan-name">Transform</div>
+      <div class="plan-price"><span>$</span>8,500</div>
+      <div class="plan-period">per month · 3 month minimum</div>
+      <ul class="plan-features">
+        <li class="active">Full AI Strategy & Roadmap</li>
+        <li class="active">Weekly advisory sessions</li>
+        <li class="active">Implementation support</li>
+        <li class="active">Team training (up to 20 staff)</li>
+        <li class="active">Custom AI tool builds</li>
+        <li class="active">Monthly performance reviews</li>
+      </ul>
+      <a href="#contact" class="plan-btn plan-btn-solid">Start Transforming</a>
+    </div>
+    <div class="plan reveal">
+      <div class="plan-name">Enterprise</div>
+      <div class="plan-price" style="font-size:36px;padding-top:8px">Custom</div>
+      <div class="plan-period">tailored to your organisation</div>
+      <ul class="plan-features">
+        <li class="active">Dedicated AI consultant</li>
+        <li class="active">Organisation-wide training</li>
+        <li class="active">Custom LLM development</li>
+        <li class="active">Data & governance frameworks</li>
+        <li class="active">SLA-backed delivery</li>
+        <li class="active">Board-level reporting</li>
+      </ul>
+      <a href="#contact" class="plan-btn plan-btn-outline">Talk to Us</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <div class="reveal">
+    <div class="section-label" style="justify-content:center">Get Started</div>
+    <h2>Ready to get the<br><em>NeuralEdge?</em></h2>
+    <p class="cta-sub">Book a free 30-minute discovery call. No pitch decks, no fluff — just an honest conversation about where AI can move the needle for your business.</p>
+    <a href="mailto:hello@neuraledge.ai" class="btn-primary">Book Discovery Call</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a class="logo" href="#" style="margin-bottom:4px;display:inline-flex">
+        <div class="logo-mark" style="animation:none"></div>
+        Neural<span>Edge</span>
+      </a>
+      <p>We bring AI to businesses — not as a novelty, but as a genuine competitive advantage. Strategy, education, and implementation under one roof.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="#">AI Strategy</a></li>
+        <li><a href="#">Education</a></li>
+        <li><a href="#">Implementation</a></li>
+        <li><a href="#">Retainers</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Case Studies</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Careers</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="#">hello@neuraledge.ai</a></li>
+        <li><a href="#">LinkedIn</a></li>
+        <li><a href="#">Twitter / X</a></li>
+        <li><a href="#">Book a Call</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 NeuralEdge. All rights reserved.</span>
+    <span style="color:rgba(107,106,128,0.5)">Built with intention. Powered by intelligence.</span>
+  </div>
+</footer>
+
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+  });
+
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '20px'; cursor.style.height = '20px';
+      ring.style.width = '60px'; ring.style.height = '60px';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '12px'; cursor.style.height = '12px';
+      ring.style.width = '36px'; ring.style.height = '36px';
+    });
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+  reveals.forEach(el => observer.observe(el));
+
+  // Smooth scroll for nav
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+    });
+  });
+</script>
+</body>
+</html>
