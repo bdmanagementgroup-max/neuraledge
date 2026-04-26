@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+:root {
+  --black: #050508;
+  --deep: #0a0a12;
+  --surface: #0f0f1a;
+  --edge: #1a1a2e;
+  --accent: #00f5d4;
+  --gold: #f5a623;
+  --white: #f0eff8;
+  --muted: #6b6a80;
+  --font-display: var(--font-syne), 'Syne', sans-serif;
+  --font-body: var(--font-dm-mono), 'DM Mono', monospace;
+  --font-serif: var(--font-instrument-serif), 'Instrument Serif', serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* CUSTOM CURSOR */
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  background: var(--accent);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transition: width 0.2s ease, height 0.2s ease, background 0.2s;
+  mix-blend-mode: difference;
+}
+
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(0, 245, 212, 0.4);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+/* NOISE OVERLAY */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.4;
+}
+
+/* GRID BACKGROUND */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 245, 212, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 245, 212, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* SCROLL REVEAL */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* MARQUEE */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* LOGO MARK PULSE */
+@keyframes pulse-mark {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 245, 212, 0.4); }
+  50% { box-shadow: 0 0 20px 8px rgba(0, 245, 212, 0.15); }
+}
+
+/* GLOW BREATHE */
+@keyframes glow-breathe {
+  0%, 100% { transform: translate(-50%, -55%) scale(1); opacity: 0.7; }
+  50% { transform: translate(-50%, -55%) scale(1.15); opacity: 1; }
+}
+
+section {
+  position: relative;
+  z-index: 2;
+}
