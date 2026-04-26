@@ -95,3 +95,31 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY
 SUPABASE_SERVICE_ROLE_KEY
 NEXT_PUBLIC_SITE_URL
 ```
+
+## Deployment
+
+- **Live URL:** https://neuraledge-alpha.vercel.app
+- **Vercel project:** neuraledge (team: bdmanagementgroup)
+- **Framework preset must be "Next.js"** — "Other" causes 404 on all routes
+- Push to `main` triggers auto-deploy
+
+## Design Spec
+
+Full design specification at `docs/superpowers/specs/2026-04-26-neuraledge-design.md` — covers architecture, DB schema, all pages, auth flow, and data flows.
+
+## Known Gotchas
+
+- **Section labels use `{"//"}`** — writing `//` as JSX text triggers `react/jsx-no-comment-textnodes`. Use `<span>{"//"}</span>` instead.
+- **Supabase FK joins type as arrays** — `.select("automations(name)")` gives `{ name: string }[]`, not `{ name: string }`. Cast via `as unknown as { name: string } | { name: string }[] | null` and handle both.
+- **Always use `<Link>` for internal navigation** — bare `<a href="/internal">` triggers `@next/next/no-html-link-for-pages` lint error.
+- **`price_from` stored in cents** — divide by 100 for display (e.g. `250000` → `$2,500`).
+- **`middleware.ts` deprecation warning** — Next.js 16 warns to use `proxy.ts` instead, but `middleware.ts` still works fine.
+
+## Setting Admin Role
+
+The Supabase UI doesn't expose `app_metadata` directly. Use the SQL editor:
+```sql
+UPDATE auth.users
+SET raw_app_meta_data = raw_app_meta_data || '{"role": "admin"}'
+WHERE email = 'your@email.com';
+```
