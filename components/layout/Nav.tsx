@@ -63,21 +63,34 @@ export default function Nav() {
         ))}
       </ul>
 
-      <Link
-        href="#contact"
-        style={{
-          background: "transparent",
-          border: "1px solid var(--accent)",
-          color: "var(--accent)",
-          padding: "10px 24px",
-          fontFamily: "var(--font-body)",
-          fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase",
-          textDecoration: "none", transition: "background 0.2s, color 0.2s",
-        }}
-        className="nav-cta"
-      >
-        Book a Call
-      </Link>
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <Link
+          href="/login"
+          style={{
+            color: "var(--muted)", textDecoration: "none",
+            fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase",
+            transition: "color 0.2s",
+          }}
+          className="nav-link"
+        >
+          Client Login
+        </Link>
+        <Link
+          href="#contact"
+          style={{
+            background: "transparent",
+            border: "1px solid var(--accent)",
+            color: "var(--accent)",
+            padding: "10px 24px",
+            fontFamily: "var(--font-body)",
+            fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase",
+            textDecoration: "none", transition: "background 0.2s, color 0.2s",
+          }}
+          className="nav-cta"
+        >
+          Book a Call
+        </Link>
+      </div>
 
       <style>{`
         .nav-link:hover { color: var(--white) !important; }
