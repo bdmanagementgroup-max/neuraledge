@@ -47,6 +47,9 @@ export default async function AdminPage() {
           { label: "Leads Inbox", href: "/admin/leads", desc: "View email captures and scoping enquiries" },
           { label: "Automations", href: "/admin/automations", desc: "Edit the public automation catalogue" },
           { label: "Articles", href: "/admin/articles", desc: "Write and publish blog articles" },
+          { label: "Notifications", href: "/admin/notifications", desc: "Send messages directly to client dashboards" },
+          { label: "Tools", href: "/admin/tools", desc: "Curate AI tools shown in client portal" },
+          { label: "Resources", href: "/admin/resources", desc: "Add guides and templates for clients" },
         ].map((link) => (
           <a key={link.href} href={link.href} style={{ textDecoration: "none" }}>
             <div style={{ background: "var(--deep)", padding: "28px 32px", borderLeft: "2px solid transparent", transition: "all 0.2s" }} className="admin-nav-card">
