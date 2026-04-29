@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Syne, DM_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
-import CustomCursor from "@/components/layout/CustomCursor";
 import RevealInit from "@/components/layout/RevealInit";
 
 const syne = Syne({
@@ -39,7 +38,6 @@ export default function RootLayout({
       className={`${syne.variable} ${dmMono.variable} ${instrumentSerif.variable}`}
     >
       <body>
-        <CustomCursor />
         <RevealInit />
         {children}
       </body>

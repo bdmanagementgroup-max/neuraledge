@@ -103,8 +103,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
       <style>{`
         aside nav a:hover { color: var(--accent) !important; }
-        body { cursor: auto !important; }
-        .cursor, .cursor-ring { display: none !important; }
       `}</style>
     </div>
   );
